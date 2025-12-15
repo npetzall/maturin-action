@@ -749,32 +749,36 @@ async function dockerBuild(
 
   const targetDir = await getCargoTargetDir(args)
 
-  core.startGroup('Cleanup build scripts artifact directory')
-  const debugBuildDir = path.join(targetDir, 'debug', 'build')
-  if (existsSync(debugBuildDir)) {
-    if (process.env.RUNNER_ALLOW_RUNASROOT === '1') {
-      await exec.exec('rm', ['-rf', debugBuildDir], {
-        ignoreReturnCode: true
-      })
-    } else {
-      await exec.exec('sudo', ['rm', '-rf', debugBuildDir], {
-        ignoreReturnCode: true
-      })
+  const cleanBeforeRun = core.getBooleanInput('clean-before-run')
+
+  if (cleanBeforeRun) {
+    core.startGroup('Cleanup build scripts artifact directory')
+    const debugBuildDir = path.join(targetDir, 'debug', 'build')
+    if (existsSync(debugBuildDir)) {
+      if (process.env.RUNNER_ALLOW_RUNASROOT === '1') {
+        await exec.exec('rm', ['-rf', debugBuildDir], {
+          ignoreReturnCode: true
+        })
+      } else {
+        await exec.exec('sudo', ['rm', '-rf', debugBuildDir], {
+          ignoreReturnCode: true
+        })
+      }
     }
-  }
-  const releaseBuildDir = path.join(targetDir, 'release', 'build')
-  if (existsSync(debugBuildDir)) {
-    if (process.env.RUNNER_ALLOW_RUNASROOT === '1') {
-      await exec.exec('rm', ['-rf', releaseBuildDir], {
-        ignoreReturnCode: true
-      })
-    } else {
-      await exec.exec('sudo', ['rm', '-rf', releaseBuildDir], {
-        ignoreReturnCode: true
-      })
+    const releaseBuildDir = path.join(targetDir, 'release', 'build')
+    if (existsSync(debugBuildDir)) {
+      if (process.env.RUNNER_ALLOW_RUNASROOT === '1') {
+        await exec.exec('rm', ['-rf', releaseBuildDir], {
+          ignoreReturnCode: true
+        })
+      } else {
+        await exec.exec('sudo', ['rm', '-rf', releaseBuildDir], {
+          ignoreReturnCode: true
+        })
+      }
     }
+    core.endGroup()
   }
-  core.endGroup()
 
   const dockerEnvs = []
   for (const env of Object.keys(process.env)) {

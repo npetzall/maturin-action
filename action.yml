@@ -52,6 +52,10 @@ inputs:
   before-script-linux:
     description: Script to run before maturin command on Linux.
     required: false
+  clean-before-run:
+    description: Clean targets before run
+    required: false
+    default: 'true'
 
 runs:
   using: 'node20'
