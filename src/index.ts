@@ -671,6 +671,7 @@ async function dockerBuild(
     `export CARGO_HOME=${rust_home}/.cargo`,
     // refer to https://github.com/rust-lang/rustup/issues/1167#issuecomment-367061388
     `command -v rustup &> /dev/null && { rm -frv ~/.rustup/toolchains/; rustup toolchain install stable; } || curl --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal`,
+    `. "${rust_home}/.cargo/env"`,
     'export PATH="$CARGO_HOME/.cargo/bin:$HOME/.local/bin:$PATH"',
     `echo "Install Rust toolchain ${rustToolchain}"`,
     `rustup update --no-self-update ${rustToolchain}`,
