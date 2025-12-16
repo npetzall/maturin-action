@@ -56,6 +56,10 @@ inputs:
     description: Clean targets before run
     required: false
     default: 'true'
+  rust-home:
+    description: Where to install rust/cargo
+    required: false
+    default: "~/"
 
 runs:
   using: 'node20'

@@ -662,12 +662,16 @@ async function dockerBuild(
       'echo "::endgroup::"'
     )
   }
+  const rust_home = core.getInput('rust-home')
   commands.push(
     // Install Rust
     'echo "::group::Install Rust"',
+    'echo "Set RUSTUP_HOME and CARGO_HOME"',
+    `export RUSTUP_HOME=${rust_home}/.rustup`,
+    `export CARGO_HOME=${rust_home}/.cargo`,
     // refer to https://github.com/rust-lang/rustup/issues/1167#issuecomment-367061388
     `command -v rustup &> /dev/null && { rm -frv ~/.rustup/toolchains/; rustup toolchain install stable; } || curl --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal`,
-    'export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"',
+    'export PATH="$CARGO_HOME/.cargo/bin:$HOME/.local/bin:$PATH"',
     `echo "Install Rust toolchain ${rustToolchain}"`,
     `rustup update --no-self-update ${rustToolchain}`,
     `rustup override set ${rustToolchain}`,
